@@ -21,11 +21,6 @@ $this->Html->script('masks', array('inline' => false));
         'placeholder' => '(XX) X0000-0000',
         'mask' => '(99) ?9999-9999'
     ));
-    echo $this->Form->input('saldo', array(
-        'label' => 'Saldo (R$)',
-        'type' => 'number',
-        'placeholder' => '0,00'
-    ));
     echo $this->Form->input('id', array('type' => 'hidden'));
     ?>
 </div>

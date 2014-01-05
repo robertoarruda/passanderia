@@ -3,26 +3,25 @@ $this->Html->script('jquery.min', array('inline' => false));
 $this->Html->script('jquery.maskedinput.min', array('inline' => false));
 $this->Html->script('masks', array('inline' => false));
 ?>
-<h1>Editar Cliente</h1>
+<h1>Alterar Saldo do Cliente</h1>
 <hr>
 <div class="form">
     <?php
-    echo $this->Form->create('Cliente', array('action' => 'editar'));
-    echo $this->Form->input('nome');
-    echo $this->Form->input('endereco', array('label' => 'Endereço'));
-    echo $this->Form->input('bairro');
-    echo $this->Form->input('telefone', array(
-        'type' => 'tel',
-        'placeholder' => '(XX) 0000-0000',
-        'mask' => '(99) 9999-9999'
-    ));
-    echo $this->Form->input('celular', array(
-        'type' => 'tel',
-        'placeholder' => '(XX) X0000-0000',
-        'mask' => '(99) ?9999-9999'
-    ));
+    echo $this->Form->create('Cliente', array('action' => 'alterar_saldo'));
+    ?>
+    <fieldset>
+    <?php
+    echo $this->Form->input('nome', array('readonly' => 'readonly'));
     echo $this->Form->input('saldo', array(
-        'label' => 'Saldo (R$)',
+        'label' => 'Saldo Atual (R$)',
+        'type' => 'text',
+        'readonly' => 'readonly'
+    ));
+    ?>
+    </fieldset>
+    <?php
+    echo $this->Form->input('lancar_saldo', array(
+        'label' => 'Lançar Valor ao Saldo (R$)',
         'type' => 'number',
         'placeholder' => '0,00'
     ));

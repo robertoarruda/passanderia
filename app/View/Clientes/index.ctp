@@ -5,8 +5,8 @@ echo $this->Element('dialogModal');
 ?>
 <div class="row-fluid btn-new">
     <div class="fright span2">
-        <?=
-        $this->Html->link('Cadastrar Cliente', array(
+        <?php
+        echo $this->Html->link('Cadastrar Cliente', array(
             'controller' => 'clientes',
             'action' => 'cadastrar'), array(
             'class' => 'btn btn-success ico-plus btn-large'
@@ -45,15 +45,18 @@ echo $this->Element('dialogModal');
                     <td><?= $cliente['Cliente']['telefone']; ?></td>
                     <td><?= $this->ColorNumber->execute($cliente['Cliente']['saldo']); ?></td>
                     <td class="control-group">
-                        <?=
-                        $this->Html->link('Editar', array(
+                        <?php
+                        echo $this->Html->link('Editar', array(
                             'action' => 'editar',
                             $cliente['Cliente']['id']), array(
                             'class' => 'btn ico-edit'
                         ));
-                        ?>
-                        <?=
-                        $this->Form->postLink('Excluir', array(
+                        echo $this->Html->link('Alterar Saldo', array(
+                            'action' => 'alterar_saldo',
+                            $cliente['Cliente']['id']), array(
+                            'class' => 'btn btn-primary ico-edit'
+                        ));
+                        echo $this->Form->postLink('Excluir', array(
                             'action' => 'excluir',
                             $cliente['Cliente']['id']), array(
                             'class' => 'btn btn-danger ico-trash',

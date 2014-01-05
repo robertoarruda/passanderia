@@ -11,11 +11,7 @@ class ClientesController extends AppController {
     }
 
     public function index() {
-        $this->set(
-                'clientes', $this->Cliente->find(
-                        'all', array('order' => array('nome'))
-                )
-        );
+        $this->set('clientes', $this->Cliente->find('all', array('order' => array('nome'))));
     }
 
     public function view($id = null) {
@@ -28,16 +24,16 @@ class ClientesController extends AppController {
         if ($this->request->is('post')) {
             if ($this->Cliente->save($this->request->data)) {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'success',
-                            'titulo' => 'Sucesso',
-                            'mensagem' => 'Cliente cadastrado.'
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Cliente cadastrado.'
                 )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'error',
-                            'titulo' => 'Erro',
-                            'mensagem' => 'Algo de errado aconteceu.'
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
                 )));
                 $this->redirect(array('action' => 'index'));
             }
@@ -46,24 +42,24 @@ class ClientesController extends AppController {
 
     public function editar($id = NULL) {
         $View = new View($this);
-        if ($this->request->is('get')) {
-            $this->request->data = $this->Cliente->read(NULL, $id);
-        } else {
+        if ($this->request->is('post')) {
             if ($this->Cliente->save($this->request->data)) {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'success',
-                            'titulo' => 'Sucesso',
-                            'mensagem' => 'Cliente alterado.'
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Cliente alterado.'
                 )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'error',
-                            'titulo' => 'Erro',
-                            'mensagem' => 'Algo de errado aconteceu.'
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
                 )));
                 $this->redirect(array('action' => 'index'));
             }
+        } else {
+            $this->request->data = $this->Cliente->read(NULL, $id);
         }
     }
 
@@ -74,21 +70,44 @@ class ClientesController extends AppController {
         }
         if ($this->Cliente->delete($id)) {
             $this->Session->setFlash($View->element('Message', array(
-                        'tipo' => 'success',
-                        'titulo' => 'Sucesso',
-                        'mensagem' => 'Cliente excluido.'
+                'tipo' => 'success',
+                'titulo' => 'Sucesso',
+                'mensagem' => 'Cliente excluido.'
             )));
             $this->redirect(array('action' => 'index'));
         } else {
             $this->Session->setFlash($View->element('Message', array(
-                        'tipo' => 'error',
-                        'titulo' => 'Erro',
-                        'mensagem' => 'Algo de errado aconteceu.'
+                'tipo' => 'error',
+                'titulo' => 'Erro',
+                'mensagem' => 'Algo de errado aconteceu.'
             )));
             $this->redirect(array('action' => 'index'));
         }
     }
+    
+    public function alterar_saldo($id) {
+        $View = new View($this);   
+        if ($this->request->is('post')) {
+            $this->Cliente->id = $this->request->data['Cliente']['id'];
+            $saldo = $this->Cliente->field('saldo');
+            if ($this->Cliente->saveField('saldo', ($saldo) + ($this->request->data['Cliente']['lancar_saldo']))) {
+                $this->Session->setFlash($View->element('Message', array(
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Saldo do cliente alterado.'
+                )));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash($View->element('Message', array(
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
+                )));
+                $this->redirect(array('action' => 'index'));
+            }
+        } else {
+            $this->request->data = $this->Cliente->read(NULL, $id);
+        }
+    }
 
 }
-
-?>
