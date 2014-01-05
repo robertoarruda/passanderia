@@ -12,8 +12,10 @@ class PagamentosController extends AppController {
 
     public function index() {
         $this->set('servicos', $this->Pagamento->find('all', array(
-                    'order' => array('Pagamento.created', 'Pagamento.servico_id')
-        )));
+            'order' => array(
+                'Pagamento.created',
+                'Pagamento.servico_id'
+        ))));
     }
 
     public function view($id = null) {
@@ -92,5 +94,3 @@ class PagamentosController extends AppController {
     }
 
 }
-
-?>

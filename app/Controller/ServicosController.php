@@ -13,9 +13,11 @@ class ServicosController extends AppController {
     public function home() {
         $this->set('title_for_layout', 'Passanderia PassExpress');
         $this->set('servicos', $this->Servico->find('all', array(
-                    'conditions' => array('Servico.data_fechamento =' => ''),
-                    'order' => array('Servico.data_fechamento', 'Servico.data_abertura')
-        )));
+            'conditions' => array('Servico.data_fechamento =' => ''),
+            'order' => array(
+                'Servico.data_fechamento',
+                'Servico.data_abertura'
+        ))));
         $this->set('menu', array(
             'cliente' => false,
             'servico' => true,
@@ -25,8 +27,11 @@ class ServicosController extends AppController {
 
     public function index() {
         $this->set('servicos', $this->Servico->find('all', array(
-                    'order' => array('Servico.data_fechamento', 'Pagamento.valor', 'Servico.data_abertura')
-        )));
+            'order' => array(
+                'Servico.data_fechamento',
+                'Pagamento.valor',
+                'Servico.data_abertura'
+        ))));
     }
 
     public function view($id = null) {
@@ -40,16 +45,16 @@ class ServicosController extends AppController {
             $this->request->data['Servico']['data_abertura'] = implode('-', array_reverse(explode('/', $this->request->data['Servico']['data_abertura'])));
             if ($this->Servico->save($this->request->data)) {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'success',
-                            'titulo' => 'Sucesso',
-                            'mensagem' => 'Serviço aberto.'
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Serviço aberto.'
                 )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'error',
-                            'titulo' => 'Erro',
-                            'mensagem' => 'Algo de errado aconteceu.'
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
                 )));
                 $this->redirect(array('action' => 'index'));
             }
@@ -77,16 +82,16 @@ class ServicosController extends AppController {
                     //cliente possui saldo para quitar serviço
                 }
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'success',
-                            'titulo' => 'Sucesso',
-                            'mensagem' => 'Serviço fechado.'
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Serviço fechado.'
                 )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'error',
-                            'titulo' => 'Erro',
-                            'mensagem' => 'Algo de errado aconteceu.'
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
                 )));
                 $this->redirect(array('action' => 'index'));
             }
@@ -104,16 +109,16 @@ class ServicosController extends AppController {
             if ($this->Servico->save($this->request->data)) {
                 $View = new View();
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'success',
-                            'titulo' => 'Sucesso',
-                            'mensagem' => 'Serviço alterado.'
+                    'tipo' => 'success',
+                    'titulo' => 'Sucesso',
+                    'mensagem' => 'Serviço alterado.'
                 )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
-                            'tipo' => 'error',
-                            'titulo' => 'Erro',
-                            'mensagem' => 'Algo de errado aconteceu.'
+                    'tipo' => 'error',
+                    'titulo' => 'Erro',
+                    'mensagem' => 'Algo de errado aconteceu.'
                 )));
                 $this->redirect(array('action' => 'index'));
             }
@@ -135,16 +140,16 @@ class ServicosController extends AppController {
         if ($this->Servico->delete($id)) {
             $View = new View();
             $this->Session->setFlash($View->element('Message', array(
-                        'tipo' => 'success',
-                        'titulo' => 'Sucesso',
-                        'mensagem' => 'Serviço excluido.'
+                'tipo' => 'success',
+                'titulo' => 'Sucesso',
+                'mensagem' => 'Serviço excluido.'
             )));
             $this->redirect(array('action' => 'index'));
         } else {
             $this->Session->setFlash($View->element('Message', array(
-                        'tipo' => 'error',
-                        'titulo' => 'Erro',
-                        'mensagem' => 'Algo de errado aconteceu.'
+                'tipo' => 'error',
+                'titulo' => 'Erro',
+                'mensagem' => 'Algo de errado aconteceu.'
             )));
             $this->redirect(array('action' => 'index'));
         }
