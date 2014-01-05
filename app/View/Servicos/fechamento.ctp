@@ -6,6 +6,7 @@
     ?>
     <fieldset>
         <?php
+        echo $this->Form->input('Cliente.id');
         echo $this->Form->input('Cliente.nome', array(
             'label' => 'Nome do Cliente',
             'type' => 'text',

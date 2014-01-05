@@ -67,8 +67,10 @@ class ServicosController extends AppController {
         $View = new View($this);
         $Time = $View->loadHelper('Time');
         if ($this->request->is('post')) {
-            $this->request->data['Servico']['data_abertura'] = $Time->format('Y-m-d', $this->request->data['Servico']['data_abertura']);
+            $this->request->data['Servico']['data_abertura_'] =  $Time->format('Y-m-d', '14/11/2013');
             $this->request->data['Servico']['data_fechamento'] = $Time->format('Y-m-d', $this->request->data['Servico']['data_fechamento']);
+            pr($this->request->data);
+            exit;
             if ($this->Servico->save($this->request->data)) {
                 $this->loadModel('Cliente');
                 $this->Cliente->id = $this->request->data['Cliente']['id'];
