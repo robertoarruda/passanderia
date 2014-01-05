@@ -1,0 +1,80 @@
+#container {
+    padding: 10px 50px 10px;
+}
+
+h1 {
+    margin: 20px 0 0 !important;
+}
+
+.btn-new {
+    background-color: #ddd;
+    padding: 10px 0 10px;
+}
+
+.btn-voltar {
+    background-color: papayawhip;
+    padding: 10px 0 10px;
+}
+
+div.input {
+    margin: 5px 0 10px;
+}
+
+.fBottom {
+    margin-top: 20%;
+}
+
+form * {
+    font-size: 14px !important;
+}
+
+form input,
+form textArea {
+    width: 500px !important;
+    height: 40px !important;
+}
+
+form select {
+    width: 510px !important;
+    height: 50px !important;
+    margin-bottom: 10px !important;
+}
+
+form input.datepicker {
+    width: 470px !important;
+}
+
+button.ui-datepicker-trigger {
+    height: 50px !important;
+}
+
+form textArea {
+    height: 200px !important;
+}
+
+.btn {
+    font-size: 12px !important;
+    margin: 1px;
+}
+
+table.tableList thead tr th {
+    font-size: 14px !important;
+    vertical-align: middle !important;
+    padding: 15px 8px 15px !important;
+}
+
+table.tableList tbody tr td {
+    font-size: 12px !important;
+    vertical-align: middle !important;
+    padding: 4px 8px 4px !important;
+}
+
+.alert {
+    font-size: 14px !important;
+    padding: 20px 10px 20px !important;
+    line-height: 25px !important;
+}
+
+.ico-link {
+    color: #000;
+}
