@@ -21,7 +21,6 @@
     <p><strong>Data de Abertura: </strong><?= $this->Time->format('d/m/Y', $servico['Servico']['data_abertura']); ?></p>
     <p><strong>Data de Fechamento: </strong><?= ($servico['Servico']['data_fechamento']) ? $this->Time->format('d/m/Y', $servico['Servico']['data_fechamento']) : ''; ?></p>
     <p><strong>Valor: </strong><?= ($servico['Servico']['valor']) ? $this->Number->currency($servico['Servico']['valor']) : ''; ?></p>
-    <p><strong>Valor Pago: </strong><?= $this->Number->currency($servico['Servico']['valor_pago']); ?></p>
     <p><strong>Comentários: </strong><?= $servico['Servico']['comentarios']; ?></p>
 </div>
 <div class="modal-footer">

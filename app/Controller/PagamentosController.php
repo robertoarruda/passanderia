@@ -10,14 +10,6 @@ class PagamentosController extends AppController {
         parent::beforeFilter();
     }
 
-    public function index() {
-        $this->set('servicos', $this->Pagamento->find('all', array(
-            'order' => array(
-                'Pagamento.created',
-                'Pagamento.servico_id'
-        ))));
-    }
-
     public function view($id = null) {
         $this->layout = 'ajax';
         $this->set('pagamento', $this->Pagamento->read(NULL, $id));
@@ -68,28 +60,6 @@ class PagamentosController extends AppController {
             $this->request->data['Servico']['data_abertura'] = $Time->format('d/m/Y', $this->request->data['Servico']['data_abertura']);
             $this->request->data['Servico']['data_fechamento'] = $Time->format('d/m/Y', $this->request->data['Servico']['data_fechamento']);
             $this->request->data['Servico']['valor'] = $Number->currency($this->request->data['Servico']['valor']);
-        }
-    }
-
-    public function excluir($id) {
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-        if ($this->Pagamento->delete($id)) {
-            $View = new View();
-            $this->Session->setFlash($View->element('Message', array(
-                'tipo' => 'success',
-                'titulo' => 'Sucesso',
-                'mensagem' => 'Pagamento excluido.'
-            )));
-            $this->redirect(array('action' => 'index'));
-        } else {
-            $this->Session->setFlash($View->element('Message', array(
-                'tipo' => 'error',
-                'titulo' => 'Erro',
-                'mensagem' => 'Algo de errado aconteceu.'
-            )));
-            $this->redirect(array('action' => 'index'));
         }
     }
 

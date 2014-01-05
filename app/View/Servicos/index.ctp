@@ -79,7 +79,14 @@ $this->Number->defaultCurrency('BRR');
                     <td>
                         <?php
                         if (!empty($servico['Pagamento']['valor'])) {
-                            echo $this->Number->currency($servico['Pagamento']['valor']);
+                            echo $this->Html->link($this->Number->currency($servico['Pagamento']['valor']), array(
+                                'controller' => 'pagamentos',
+                                'action' => 'view',
+                                $servico['Pagamento']['id']), array(
+                                'class' => 'ico-link',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalDialog'
+                            ));
                         } else {
                             if ($servico['Servico']['data_fechamento']) {
                                 echo $this->Html->link('Lançar Pagamento', array(
