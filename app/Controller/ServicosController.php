@@ -36,9 +36,8 @@ class ServicosController extends AppController {
 
     public function abertura() {
         $View = new View($this);
-        $Time = $View->loadHelper('Time');
         if ($this->request->is('post')) {
-            $this->request->data['Servico']['data_abertura'] = $Time->format('Y-m-d', $this->request->data['Servico']['data_abertura']);
+            $this->request->data['Servico']['data_abertura'] = implode('-', array_reverse(explode('/', $this->request->data['Servico']['data_abertura'])));
             if ($this->Servico->save($this->request->data)) {
                 $this->Session->setFlash($View->element('Message', array(
                             'tipo' => 'success',
@@ -67,15 +66,16 @@ class ServicosController extends AppController {
         $View = new View($this);
         $Time = $View->loadHelper('Time');
         if ($this->request->is('post')) {
-            $this->request->data['Servico']['data_abertura_'] =  $Time->format('Y-m-d', '14/11/2013');
-            $this->request->data['Servico']['data_fechamento'] = $Time->format('Y-m-d', $this->request->data['Servico']['data_fechamento']);
-            pr($this->request->data);
-            exit;
+            unset($this->request->data['Servico']['data_abertura']);
+            $this->request->data['Servico']['data_fechamento'] = implode('-', array_reverse(explode('/', $this->request->data['Servico']['data_fechamento'])));
             if ($this->Servico->save($this->request->data)) {
                 $this->loadModel('Cliente');
                 $this->Cliente->id = $this->request->data['Cliente']['id'];
                 $saldo = $this->Cliente->field('saldo');
                 $this->Cliente->saveField('saldo', ($saldo) - ($this->request->data['Servico']['valor']));
+                if ($saldo >= $this->request->data['Servico']['valor']) {
+                    //cliente possui saldo para quitar serviço
+                }
                 $this->Session->setFlash($View->element('Message', array(
                             'tipo' => 'success',
                             'titulo' => 'Sucesso',
@@ -100,8 +100,7 @@ class ServicosController extends AppController {
         $View = new View($this);
         $Time = $View->loadHelper('Time');
         if ($this->request->is('post')) {
-            $this->request->data['Servico']['data_abertura'] = $Time->format('Y-m-d', $this->request->data['Servico']['data_abertura']);
-            $this->request->data['Servico']['data_fechamento'] = ($this->request->data['Servico']['data_fechamento']) ? $Time->format('Y-m-d', $this->request->data['Servico']['data_fechamento']) : '';
+            $this->request->data['Servico']['data_abertura'] = implode('-', array_reverse(explode('/', $this->request->data['Servico']['data_abertura'])));
             if ($this->Servico->save($this->request->data)) {
                 $View = new View();
                 $this->Session->setFlash($View->element('Message', array(
@@ -121,7 +120,6 @@ class ServicosController extends AppController {
         } else {
             $this->request->data = $this->Servico->read(NULL, $id);
             $this->request->data['Servico']['data_abertura'] = $Time->format('d/m/Y', $this->request->data['Servico']['data_abertura']);
-            $this->request->data['Servico']['data_fechamento'] = ($this->request->data['Servico']['data_fechamento']) ? $Time->format('d/m/Y', $this->request->data['Servico']['data_fechamento']) : '';
             $clientes = $this->Servico->Cliente->find('list', array(
                 'fields' => array('Cliente.nome'),
                 'order' => array('Cliente.nome')
