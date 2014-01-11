@@ -75,17 +75,21 @@ class ServicosController extends AppController {
             $this->request->data['Servico']['data_fechamento'] = implode('-', array_reverse(explode('/', $this->request->data['Servico']['data_fechamento'])));
             if ($this->Servico->save($this->request->data)) {
                 $this->loadModel('Cliente');
-                $this->Cliente->id = $this->request->data['Cliente']['id'];
-                $saldo = $this->Cliente->field('saldo');
-                $this->Cliente->saveField('saldo', ($saldo) - ($this->request->data['Servico']['valor']));
-                if ($saldo >= $this->request->data['Servico']['valor']) {
-                    //cliente possui saldo para quitar serviço
+                $dados_log = array('servico_id' => $this->request->data['Servico']['id']);
+                $resultado = $this->Cliente->alterarSaldo($this->request->data['Cliente']['id'], - $this->request->data['Servico']['valor'], __METHOD__, $dados_log);
+                if ($resultado) {
+                    $this->Session->setFlash($View->element('Message', array(
+                        'tipo' => 'success',
+                        'titulo' => 'Sucesso',
+                        'mensagem' => 'Serviço fechado.'
+                    )));
+                } else {
+                    $this->Session->setFlash($View->element('Message', array(
+                        'tipo' => 'error',
+                        'titulo' => 'Erro',
+                        'mensagem' => 'Ocorreu um erro ao tentar alterar o saldo do cliente.<br>Favor, alterar manualmente no cadastro de clientes.'
+                    )));
                 }
-                $this->Session->setFlash($View->element('Message', array(
-                    'tipo' => 'success',
-                    'titulo' => 'Sucesso',
-                    'mensagem' => 'Serviço fechado.'
-                )));
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
