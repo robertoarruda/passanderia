@@ -16,5 +16,3 @@ class Servico extends AppModel {
         )
     );
 }
-
-?>

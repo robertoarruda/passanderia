@@ -19,6 +19,21 @@ h1 {
 div.input {
     margin: 5px 0 10px;
 }
+div.log-cliente {
+    font-size: 12px;
+    overflow-y: scroll;
+    height: 120px;
+}
+
+div.log-cliente div.list-log {
+    margin-bottom: 4px;
+    padding: 5px;
+    background-color: #eee;
+}
+
+div.log-cliente div.list-log ul li {
+    margin-bottom: -5px;
+}
 
 .fBottom {
     margin-top: 20%;
@@ -49,7 +64,7 @@ button.ui-datepicker-trigger {
 }
 
 form textArea {
-    height: 200px !important;
+    height: 80px !important;
 }
 
 .btn {

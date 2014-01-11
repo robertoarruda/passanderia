@@ -16,7 +16,10 @@ class ClientesController extends AppController {
 
     public function view($id = null) {
         $this->layout = 'ajax';
-        $this->set('cliente', $this->Cliente->read(NULL, $id));
+        $cliente = $this->Cliente->read(NULL, $id);
+        $this->loadModel('SaldoLog');
+        $cliente['Cliente']['log'] = $this->SaldoLog->returnLog($id);
+        $this->set('cliente', $cliente);
     }
 
     public function cadastrar() {
@@ -88,23 +91,21 @@ class ClientesController extends AppController {
     public function alterar_saldo($id) {
         $View = new View($this);   
         if ($this->request->is('post')) {
-            $this->Cliente->id = $this->request->data['Cliente']['id'];
-            $saldo = $this->Cliente->field('saldo');
-            if ($this->Cliente->saveField('saldo', ($saldo) + ($this->request->data['Cliente']['lancar_saldo']))) {
+        $resultado = $this->Cliente->alterarSaldo($this->request->data['Cliente']['id'], $this->request->data['Cliente']['lancar_saldo'], __METHOD__);
+            if ($resultado) {
                 $this->Session->setFlash($View->element('Message', array(
                     'tipo' => 'success',
                     'titulo' => 'Sucesso',
                     'mensagem' => 'Saldo do cliente alterado.'
                 )));
-                $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash($View->element('Message', array(
                     'tipo' => 'error',
                     'titulo' => 'Erro',
                     'mensagem' => 'Algo de errado aconteceu.'
                 )));
-                $this->redirect(array('action' => 'index'));
             }
+            $this->redirect(array('action' => 'index'));
         } else {
             $this->request->data = $this->Cliente->read(NULL, $id);
         }
