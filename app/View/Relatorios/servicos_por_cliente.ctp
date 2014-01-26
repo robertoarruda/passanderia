@@ -6,12 +6,12 @@
 <?php
 echo $this->Form->create('Filtro');
 echo $this->Form->input('de', array(
-    'label' => 'Início (Data de Abertura)',
+    'label' => 'Início (Data de Fechamento)',
     'type' => 'text',
     'class' => 'datepicker'
 ));
 echo $this->Form->input('ate', array(
-    'label' => 'Fim (Data de Abertura)',
+    'label' => 'Fim (Data de Fechamento)',
     'type' => 'text',
     'class' => 'datepicker'
 ));

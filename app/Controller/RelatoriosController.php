@@ -66,7 +66,14 @@ class RelatoriosController extends AppController {
         }
         $filtro = $this->Session->read('relatorio_servicos');
         
-        $options = array();
+        $options = array('conditions' => array());
+        if (!isset($filtro)) {
+            $filtro = array(
+                'de' => '',
+                'ate' => '',
+                'status' => ''
+            );
+        }
         
         if (empty($filtro['de'])) {
             $de = date('Y-m-\0\1');
@@ -78,32 +85,32 @@ class RelatoriosController extends AppController {
             $ate = date('Y-m-') . date("t", mktime(0,0,0,date('m'),'01',date('Y')));
             $filtro['ate'] = date("t", mktime(0,0,0,date('m'),'01',date('Y'))) . date('/m/Y');
         } else {
-            $de = implode('-', array_reverse(explode('/', $filtro['ate'])));
+            $ate = implode('-', array_reverse(explode('/', $filtro['ate'])));
         }
         if (!empty($de) && !empty($ate)) {
-            $options['conditions'] = array(
-                'Servico.data_abertura >=' => $de,
-                'Servico.data_abertura <=' => $ate
-            );
+            $options['conditions'] = array_merge($options['conditions'], array(
+                'Servico.data_fechamento >=' => $de,
+                'Servico.data_fechamento <=' => $ate
+            ));
         }
         switch ($filtro['status']) {
             case 'all':
                 break;
             case 'aberto':
-                $options['conditions'][] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Servico.data_fechamento' => ''
-                );
+                ));
                 break;
             case 'fechado':
-                $options['conditions'][] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Servico.data_fechamento <>' => '',
                     'Pagamento.valor' => ''
-                );
+                ));
                 break;
             case 'pago':
-                $options['conditions'] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Pagamento.valor <>' => ''
-                );
+                ));
                 break;
         }
         $options['order'] = array('Servico.data_fechamento', 'Servico.data_abertura');
@@ -114,18 +121,24 @@ class RelatoriosController extends AppController {
     public function servicos_por_cliente() {
         $this->loadModel('Servico');
         
+        $this->Servico->virtualFields = array(
+            'servico_count' => 'COUNT(Servico.id)',
+            'servico_sum' => 'SUM(Servico.valor)'
+        );
+        
         if(!empty($this->request->data['Filtro'])) {
             $this->Session->write('relatorio_servicos_por_cliente', $this->request->data['Filtro']);
         }
         $filtro = $this->Session->read('relatorio_servicos_por_cliente');
         
-        $this->Servico->virtualFields = array(
-            'servico_count' => 'COUNT(Servico.id)',
-            'servico_sum' => 'SUM(Servico.valor)'
-        );
-        $options = array();
-        $options['order'] = array('Servico.servico_count DESC', 'Cliente.nome');
-        $options['group'] = array('Servico.cliente_id');
+        $options = array('conditions' => array());
+        if (!isset($filtro)) {
+            $filtro = array(
+                'de' => '',
+                'ate' => '',
+                'status' => ''
+            );
+        }
         
         if (empty($filtro['de'])) {
             $de = date('Y-m-\0\1');
@@ -137,34 +150,36 @@ class RelatoriosController extends AppController {
             $ate = date('Y-m-') . date("t", mktime(0,0,0,date('m'),'01',date('Y')));
             $filtro['ate'] = date("t", mktime(0,0,0,date('m'),'01',date('Y'))) . date('/m/Y');
         } else {
-            $de = implode('-', array_reverse(explode('/', $filtro['ate'])));
+            $ate = implode('-', array_reverse(explode('/', $filtro['ate'])));
         }
         if (!empty($de) && !empty($ate)) {
-            $options['conditions'] = array(
-                'Servico.data_abertura >=' => $de,
-                'Servico.data_abertura <=' => $ate
-            );
+            $options['conditions'] = array_merge($options['conditions'], array(
+                'Servico.data_fechamento >=' => $de,
+                'Servico.data_fechamento <=' => $ate
+            ));
         }
         switch ($filtro['status']) {
             case 'all':
                 break;
             case 'aberto':
-                $options['conditions'][] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Servico.data_fechamento' => ''
-                );
+                ));
                 break;
             case 'fechado':
-                $options['conditions'][] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Servico.data_fechamento <>' => '',
                     'Pagamento.valor' => ''
-                );
+                ));
                 break;
             case 'pago':
-                $options['conditions'] = array(
+                $options['conditions'] = array_merge($options['conditions'], array(
                     'Pagamento.valor <>' => ''
-                );
+                ));
                 break;
         }
+        $options['order'] = array('Servico.servico_count DESC', 'Cliente.nome');
+        $options['group'] = array('Servico.cliente_id');
         $this->request->data['Filtro'] = $filtro;
         $this->set('servicos', $this->Servico->find('all', $options));
     }
