@@ -3,6 +3,31 @@
 <?= $this->Element('RelatorioLinks'); ?>
 <hr>
 <?= $this->Element('dialogModal'); ?>
+<?php
+echo $this->Form->create('Filtro');
+echo $this->Form->input('de', array(
+    'label' => 'Início (Data de Abertura)',
+    'type' => 'text',
+    'class' => 'datepicker'
+));
+echo $this->Form->input('ate', array(
+    'label' => 'Fim (Data de Abertura)',
+    'type' => 'text',
+    'class' => 'datepicker'
+));
+echo $this->Form->input('status', array(
+    'class' => 'customSelect',
+    'data-placeholder' => 'Selecione...',
+    'default' => 'all',
+    'type' => 'select',
+    'options' => array(
+        'all' => 'Todos',
+        'aberto' => 'Aberto',
+        'fechado' => 'Fechado',
+        'pago' => 'Pago'
+)));
+echo $this->Form->end(array('label' => 'Buscar', 'class' => 'btn btn-primary'));
+?>
 <table class="tableList">
     <thead>
         <tr>

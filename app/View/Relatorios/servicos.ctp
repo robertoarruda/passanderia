@@ -3,6 +3,31 @@
 <?= $this->Element('RelatorioLinks'); ?>
 <hr>
 <?= $this->Element('dialogModal'); ?>
+<?php
+echo $this->Form->create('Filtro');
+echo $this->Form->input('de', array(
+    'label' => 'Início (Data de Abertura)',
+    'type' => 'text',
+    'class' => 'datepicker'
+));
+echo $this->Form->input('ate', array(
+    'label' => 'Fim (Data de Abertura)',
+    'type' => 'text',
+    'class' => 'datepicker'
+));
+echo $this->Form->input('status', array(
+    'class' => 'customSelect',
+    'data-placeholder' => 'Selecione...',
+    'default' => 'all',
+    'type' => 'select',
+    'options' => array(
+        'all' => 'Todos',
+        'aberto' => 'Aberto',
+        'fechado' => 'Fechado',
+        'pago' => 'Pago'
+)));
+echo $this->Form->end(array('label' => 'Buscar', 'class' => 'btn btn-primary'));
+?>
 <table class="tableList">
     <thead>
         <tr>
@@ -20,7 +45,7 @@
         $totalPago = 0;
         if (!empty($servicos)) : foreach ($servicos as $servico):
             $totalServico += $servico['Servico']['valor'];
-            $totalPago += $servico['Servico']['valor_pago'];
+            $totalPago += $servico['Pagamento']['valor'];
             ?>
                 <tr>
                     <td>
@@ -56,7 +81,7 @@
                         ?>
                     </td>
                     <td><?= $this->ColorNumber->execute($servico['Servico']['valor']); ?></td>
-                    <td><?= $this->ColorNumber->execute($servico['Servico']['valor_pago']); ?></td>
+                    <td><?= $this->ColorNumber->execute($servico['Pagamento']['valor']); ?></td>
                 </tr>
             <?php endforeach; ?>
                 <tr>

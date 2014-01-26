@@ -60,70 +60,113 @@ class RelatoriosController extends AppController {
 
     public function servicos() {
         $this->loadModel('Servico');
-        $conditions = array();
-        if (empty($this->request->query)) {
-            $dados = array(
-                'id' => '',
-                'cliente' => '',
-                'de' => '',
-                'ate' => ''
-            );
-        } else {
-            $dados = $this->request->query;
-            if (!empty($this->request->query['id'])) {
-                $conditions[] = array('Servico.id =' => $this->request->query['id']);
-            }
-            if (!empty($this->request->query['cliente'])) {
-                $conditions[] = array('Cliente.nome LIKE' => '%' . $this->request->query['cliente'] .  '%');
-            }
-            $de = '';
-            $ate = '';
-            if ((!empty($this->request->query['de']['year']))
-                && (!empty($this->request->query['de']['month']))
-                && (!empty($this->request->query['de']['day']))
-            ) {
-                $de = $this->request->query['de']['year'] . '-' . $this->request->query['de']['month'] . '-' . $this->request->query['de']['day'];
-            }
-            if ((!empty($this->request->query['ate']['year']))
-                && (!empty($this->request->query['ate']['month']))
-                && (!empty($this->request->query['ate']['day']))
-            ) {
-                $ate = $this->request->query['ate']['year'] . '-' . $this->request->query['ate']['month'] . '-' . $this->request->query['ate']['day'];
-            }
-            if (($de) || ($ate)) {
-                $de = ($de) ? $de : '0000-00-00';
-                $ate = ($ate) ? $ate : '9999-12-31';
-                $conditions[] = array('Servico.data_fechamento BETWEEN ? AND ?' => array($de, $ate));
-            }
+        
+        if(!empty($this->request->data['Filtro'])) {
+            $this->Session->write('relatorio_servicos', $this->request->data['Filtro']);
         }
-        $this->set('dados', $dados);
-        $this->set(
-            'servicos',
-            $this->Servico->find(
-                'all',
-                array(
-                    'conditions' => $conditions,
-                    'order' => array('Servico.data_fechamento', 'Servico.data_abertura')
-                )
-            )
-        );
+        $filtro = $this->Session->read('relatorio_servicos');
+        
+        $options = array();
+        
+        if (empty($filtro['de'])) {
+            $de = date('Y-m-\0\1');
+            $filtro['de'] = date('\0\1/m/Y');
+        } else {
+            $de = implode('-', array_reverse(explode('/', $filtro['de'])));
+        }
+        if (empty($filtro['ate'])) {
+            $ate = date('Y-m-') . date("t", mktime(0,0,0,date('m'),'01',date('Y')));
+            $filtro['ate'] = date("t", mktime(0,0,0,date('m'),'01',date('Y'))) . date('/m/Y');
+        } else {
+            $de = implode('-', array_reverse(explode('/', $filtro['ate'])));
+        }
+        if (!empty($de) && !empty($ate)) {
+            $options['conditions'] = array(
+                'Servico.data_abertura >=' => $de,
+                'Servico.data_abertura <=' => $ate
+            );
+        }
+        switch ($filtro['status']) {
+            case 'all':
+                break;
+            case 'aberto':
+                $options['conditions'][] = array(
+                    'Servico.data_fechamento' => ''
+                );
+                break;
+            case 'fechado':
+                $options['conditions'][] = array(
+                    'Servico.data_fechamento <>' => '',
+                    'Pagamento.valor' => ''
+                );
+                break;
+            case 'pago':
+                $options['conditions'] = array(
+                    'Pagamento.valor <>' => ''
+                );
+                break;
+        }
+        $options['order'] = array('Servico.data_fechamento', 'Servico.data_abertura');
+        $this->request->data['Filtro'] = $filtro;
+        $this->set('servicos', $this->Servico->find('all', $options));
     }
 
     public function servicos_por_cliente() {
         $this->loadModel('Servico');
+        
+        if(!empty($this->request->data['Filtro'])) {
+            $this->Session->write('relatorio_servicos_por_cliente', $this->request->data['Filtro']);
+        }
+        $filtro = $this->Session->read('relatorio_servicos_por_cliente');
+        
         $this->Servico->virtualFields = array(
             'servico_count' => 'COUNT(Servico.id)',
             'servico_sum' => 'SUM(Servico.valor)'
         );
-        $this->set('servicos', $this->Servico->find(
-                'all', array(
-                    'order' => array('Servico.servico_count DESC', 'Cliente.nome'),
-                    'group' => array('Servico.cliente_id')
-                )
-            )
-        );
+        $options = array();
+        $options['order'] = array('Servico.servico_count DESC', 'Cliente.nome');
+        $options['group'] = array('Servico.cliente_id');
+        
+        if (empty($filtro['de'])) {
+            $de = date('Y-m-\0\1');
+            $filtro['de'] = date('\0\1/m/Y');
+        } else {
+            $de = implode('-', array_reverse(explode('/', $filtro['de'])));
+        }
+        if (empty($filtro['ate'])) {
+            $ate = date('Y-m-') . date("t", mktime(0,0,0,date('m'),'01',date('Y')));
+            $filtro['ate'] = date("t", mktime(0,0,0,date('m'),'01',date('Y'))) . date('/m/Y');
+        } else {
+            $de = implode('-', array_reverse(explode('/', $filtro['ate'])));
+        }
+        if (!empty($de) && !empty($ate)) {
+            $options['conditions'] = array(
+                'Servico.data_abertura >=' => $de,
+                'Servico.data_abertura <=' => $ate
+            );
+        }
+        switch ($filtro['status']) {
+            case 'all':
+                break;
+            case 'aberto':
+                $options['conditions'][] = array(
+                    'Servico.data_fechamento' => ''
+                );
+                break;
+            case 'fechado':
+                $options['conditions'][] = array(
+                    'Servico.data_fechamento <>' => '',
+                    'Pagamento.valor' => ''
+                );
+                break;
+            case 'pago':
+                $options['conditions'] = array(
+                    'Pagamento.valor <>' => ''
+                );
+                break;
+        }
+        $this->request->data['Filtro'] = $filtro;
+        $this->set('servicos', $this->Servico->find('all', $options));
     }
 
 }
-
-?>
