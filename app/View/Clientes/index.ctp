@@ -1,7 +1,13 @@
 <h1>Clientes</h1>
 <hr>
+<?= $this->Element('dialogModal'); ?>
 <?php
-echo $this->Element('dialogModal');
+echo $this->Form->create('Filtro', array('class' => 'filtro'));
+echo $this->Form->input('cliente', array(
+    'type' => 'text',
+    'placeholder' => 'Nome do cliente'
+));
+echo $this->Form->end(array('label' => 'Buscar', 'class' => 'btn btn-primary'));
 ?>
 <div class="row-fluid btn-new">
     <div class="fright span2">

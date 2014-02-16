@@ -26,12 +26,55 @@ class ServicosController extends AppController {
     }
 
     public function index() {
-        $this->set('servicos', $this->Servico->find('all', array(
-            'order' => array(
-                'Servico.data_fechamento',
-                'Pagamento.valor',
-                'Servico.data_abertura'
-        ))));
+        if(!empty($this->request->data['Filtro'])) {
+            $this->Session->write('servicos', $this->request->data['Filtro']);
+        }
+        $filtro = $this->Session->read('servicos');
+        
+        $options = array('conditions' => array());
+        if (!isset($filtro)) {
+            $filtro = array(
+                'de' => '',
+                'ate' => '',
+                'status' => ''
+            );
+        }
+        
+        if (!empty($filtro['de'])) {
+            $de = implode('-', array_reverse(explode('/', $filtro['de'])));
+        }
+        if (!empty($filtro['ate'])) {
+            $ate = implode('-', array_reverse(explode('/', $filtro['ate'])));
+        }
+        if (!empty($de) && !empty($ate)) {
+            $options['conditions'] = array_merge($options['conditions'], array(
+                'Servico.data_fechamento >=' => $de,
+                'Servico.data_fechamento <=' => $ate
+            ));
+        }
+        switch ($filtro['status']) {
+            case 'all':
+                break;
+            case 'aberto':
+                $options['conditions'] = array_merge($options['conditions'], array(
+                    'Servico.data_fechamento' => ''
+                ));
+                break;
+            case 'fechado':
+                $options['conditions'] = array_merge($options['conditions'], array(
+                    'Servico.data_fechamento <>' => '',
+                    'Pagamento.valor' => ''
+                ));
+                break;
+            case 'pago':
+                $options['conditions'] = array_merge($options['conditions'], array(
+                    'Pagamento.valor <>' => ''
+                ));
+                break;
+        }
+        $options['order'] = array('Servico.data_fechamento', 'Pagamento.valor', 'Servico.data_abertura');
+        $this->request->data['Filtro'] = $filtro;
+        $this->set('servicos', $this->Servico->find('all', $options));
     }
 
     public function view($id = null) {
@@ -81,7 +124,7 @@ class ServicosController extends AppController {
                     $this->Session->setFlash($View->element('Message', array(
                         'tipo' => 'success',
                         'titulo' => 'Sucesso',
-                        'mensagem' => 'Serviço fechado.'
+                        'mensagem' => 'Serviço fechado. <a href="pagamentos/lancar/' . $this->request->data['Servico']['id'] . '"><input type="button" value="Deseja lançar pagamento deste serviço?" class="btn btn-success"></a>'
                     )));
                 } else {
                     $this->Session->setFlash($View->element('Message', array(

@@ -39,6 +39,12 @@ div.log-cliente div.list-log ul li {
     margin-top: 20%;
 }
 
+form.filtro {
+    background: #EEE;
+    border: 1px solid #CCC;
+    padding: 20px;
+}
+
 form * {
     font-size: 14px !important;
 }

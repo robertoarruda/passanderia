@@ -11,7 +11,18 @@ class ClientesController extends AppController {
     }
 
     public function index() {
-        $this->set('clientes', $this->Cliente->find('all', array('order' => array('nome'))));
+        if(!empty($this->request->data['Filtro'])) {
+            $this->Session->write('clientes', $this->request->data['Filtro']);
+        }
+        $filtro = $this->Session->read('clientes');
+        
+        $options = array('conditions' => array());
+                
+        if (!empty($filtro['cliente'])) {
+            $options['conditions'] = array('nome LIKE' => "%{$filtro['cliente']}%");
+        }
+        $this->request->data['Filtro'] = $filtro;
+        $this->set('clientes', $this->Cliente->find('all', $options));
     }
 
     public function view($id = null) {
